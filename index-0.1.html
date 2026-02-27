@@ -1257,7 +1257,17 @@ var SeiaAnalytics = (function() {
 <script>
 // === ADMIN DASHBOARD ===
 (function() {
-    var EXPECTED_HASH = '3bcab43a912e0f07a97f11224aa04249248fdac718c271e1eb4b8b67bb336a7f';
+    // Simple hash function (works on file:// and https://)
+    function simpleHash(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var c = str.charCodeAt(i);
+            hash = ((hash << 5) - hash + c) | 0;
+        }
+        return hash.toString(36);
+    }
+    var EXPECTED_USER = 'Zeryan';
+    var EXPECTED_HASH = simpleHash('123momiaes');
     var adminCharts = {};
 
     function checkRoute() {
@@ -1280,15 +1290,11 @@ var SeiaAnalytics = (function() {
         if (e.key === 'Enter') attemptAdminLogin();
     });
 
-    window.attemptAdminLogin = async function() {
+    window.attemptAdminLogin = function() {
         var user = document.getElementById('adminUser').value.trim();
         var pass = document.getElementById('adminPass').value;
         var errorEl = document.getElementById('adminError');
-        var data = new TextEncoder().encode(user + ':' + pass);
-        var hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        var hashArray = Array.from(new Uint8Array(hashBuffer));
-        var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-        if (hashHex === EXPECTED_HASH) {
+        if (user === EXPECTED_USER && simpleHash(pass) === EXPECTED_HASH) {
             sessionStorage.setItem('seia_admin_auth', 'true');
             errorEl.textContent = '';
             showDashboard();
