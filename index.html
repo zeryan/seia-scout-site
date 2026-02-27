@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEIA Scout — Inteligencia de Mercado Renovable Chile | Nahuelcura</title>
+    <meta name="description" content="Plataforma de inteligencia de mercado para energías renovables en Chile. 101 proyectos SEIA mapeados. Predicciones de costos EPC con red neuronal. Paquetes de propuesta automatizados.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
+    <style>
+        :root {
+            --bg: #0a0a14;
+            --bg-card: #12121f;
+            --bg-card-hover: #1a1a30;
+            --bg-accent: #0d1b2a;
+            --text: #e8e8f0;
+            --text-dim: #8888aa;
+            --text-bright: #ffffff;
+            --cyan: #00d4ff;
+            --cyan-glow: rgba(0,212,255,0.15);
+            --orange: #ff6b35;
+            --green: #10b981;
+            --purple: #7c3aed;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --border: rgba(255,255,255,0.06);
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(10,10,20,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+        }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { font-weight: 700; font-size: 1.1rem; color: var(--cyan); letter-spacing: -0.02em; }
+        .nav-logo span { color: var(--text-dim); font-weight: 400; }
+        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--cyan); }
+        .btn-nav {
+            background: var(--cyan); color: #000; padding: 8px 20px; border-radius: 20px;
+            font-weight: 600; font-size: 0.82rem; text-decoration: none; transition: all 0.2s;
+        }
+        .btn-nav:hover { background: #33ddff; transform: translateY(-1px); }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            background: radial-gradient(ellipse at 50% 30%, rgba(0,212,255,0.08) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 70%, rgba(255,107,53,0.05) 0%, transparent 50%);
+            padding-top: 80px;
+        }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--cyan-glow); border: 1px solid rgba(0,212,255,0.2);
+            padding: 6px 16px; border-radius: 20px; font-size: 0.78rem; color: var(--cyan);
+            font-weight: 500; margin-bottom: 24px;
+        }
+        .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .hero h1 {
+            font-size: 3.2rem; font-weight: 800; line-height: 1.1;
+            letter-spacing: -0.03em; margin-bottom: 20px;
+        }
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--green) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.1rem; color: var(--text-dim); max-width: 480px; margin-bottom: 32px; }
+        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--cyan); color: #000; padding: 14px 32px; border-radius: 12px;
+            font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
+        }
+        .btn-primary:hover { background: #33ddff; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.3); }
+        .btn-secondary {
+            background: transparent; color: var(--text); padding: 14px 32px; border-radius: 12px;
+            font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+
+        /* HERO VISUAL */
+        .hero-visual {
+            position: relative; background: var(--bg-card); border-radius: var(--radius);
+            border: 1px solid var(--border); padding: 24px; padding-bottom: 40px;
+            overflow: hidden; max-height: 400px; display: flex; flex-direction: column;
+        }
+        .hero-visual::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 180deg, transparent, rgba(0,212,255,0.05), transparent 30%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .hero-visual canvas { position: relative; z-index: 1; flex: 1; min-height: 0; max-height: 280px; }
+        .hero-visual .label {
+            position: relative; z-index: 1; text-align: center;
+            font-size: 0.75rem; color: var(--text-dim); margin-top: 12px; flex-shrink: 0;
+        }
+
+        /* EMAIL GATE MODAL */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-card); border: 1px solid rgba(0,212,255,0.2);
+            border-radius: var(--radius); padding: 40px; max-width: 460px; width: 90%;
+            text-align: center; position: relative;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(0,212,255,0.08);
+        }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px; background: none; border: none;
+            color: var(--text-dim); font-size: 1.4rem; cursor: pointer; transition: color 0.2s;
+            line-height: 1;
+        }
+        .modal-close:hover { color: var(--text); }
+        .modal-icon { font-size: 2.4rem; margin-bottom: 16px; }
+        .modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .modal p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
+        .modal-form { display: flex; gap: 10px; }
+        .modal-form input {
+            flex: 1; padding: 12px 16px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.3);
+            color: var(--text); font-size: 0.9rem; font-family: inherit; outline: none;
+            transition: border-color 0.2s;
+        }
+        .modal-form input:focus { border-color: var(--cyan); }
+        .modal-form input::placeholder { color: var(--text-dim); }
+        .modal-form button {
+            padding: 12px 24px; border-radius: 10px; border: none;
+            background: var(--cyan); color: #000; font-weight: 700; font-size: 0.88rem;
+            cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit;
+        }
+        .modal-form button:hover { background: #33ddff; }
+        .modal-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .modal-status {
+            margin-top: 12px; font-size: 0.8rem; min-height: 20px;
+        }
+        .modal-status.success { color: var(--green); }
+        .modal-status.error { color: var(--red); }
+        .modal-privacy { font-size: 0.72rem; color: var(--text-dim); margin-top: 16px; }
+
+        /* STATS BAR */
+        .stats-bar {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+            background: var(--border); border-radius: var(--radius);
+            overflow: hidden; margin: -40px 0 80px;
+            position: relative; z-index: 2;
+        }
+        .stat-item {
+            background: var(--bg-card); padding: 32px 24px; text-align: center;
+        }
+        .stat-item .number {
+            font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--cyan), var(--green));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-item .label { font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
+
+        /* SECTIONS */
+        section { padding: 80px 0; }
+        .section-label {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--cyan); margin-bottom: 12px;
+        }
+        .section-label .line { width: 24px; height: 1px; background: var(--cyan); }
+        h2 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; }
+        .section-desc { font-size: 1.05rem; color: var(--text-dim); max-width: 640px; margin-bottom: 48px; }
+
+        /* CARDS */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 28px; transition: all 0.3s;
+        }
+        .card:hover { border-color: rgba(0,212,255,0.2); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .card-icon { font-size: 2rem; margin-bottom: 16px; }
+        .card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+        .card p { font-size: 0.88rem; color: var(--text-dim); }
+
+        /* MARKET TABLE */
+        .market-table-wrap {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .market-table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .market-table-wrap th {
+            text-align: left; padding: 14px 16px; font-weight: 600; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);
+            border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2);
+        }
+        .market-table-wrap td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .market-table-wrap tr:hover td { background: rgba(0,212,255,0.03); }
+        .badge {
+            display: inline-block; padding: 3px 10px; border-radius: 12px;
+            font-size: 0.72rem; font-weight: 600;
+        }
+        .badge-hibrido { background: rgba(0,212,255,0.15); color: var(--cyan); }
+        .badge-bess { background: rgba(255,107,53,0.15); color: var(--orange); }
+        .badge-pv { background: rgba(16,185,129,0.15); color: var(--green); }
+
+        /* NN SECTION */
+        .nn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+        .nn-step {
+            display: flex; gap: 16px; margin-bottom: 24px; padding: 20px;
+            background: var(--bg-card); border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .nn-step-num {
+            min-width: 36px; height: 36px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: 700;
+            font-size: 0.85rem; flex-shrink: 0;
+        }
+        .nn-step h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+        .nn-step p { font-size: 0.82rem; color: var(--text-dim); }
+        .nn-arch {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px; position: sticky; top: 100px;
+        }
+        .nn-arch h3 { font-size: 1rem; font-weight: 600; margin-bottom: 20px; color: var(--cyan); }
+        .arch-layer {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+            padding: 10px 16px; border-radius: var(--radius-sm);
+        }
+        .arch-layer .layer-name {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+            font-weight: 500; min-width: 120px;
+        }
+        .arch-layer .layer-bar {
+            flex: 1; height: 8px; border-radius: 4px; position: relative; overflow: hidden;
+        }
+        .arch-layer .layer-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+        .arch-layer .layer-val { font-size: 0.72rem; color: var(--text-dim); min-width: 50px; text-align: right; }
+        .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; }
+        .metric-box {
+            text-align: center; padding: 16px; background: rgba(0,0,0,0.2);
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+        }
+        .metric-box .val { font-size: 1.6rem; font-weight: 800; }
+        .metric-box .lbl { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+
+        /* CHART SECTION */
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .chart-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 24px;
+        }
+        .chart-card h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
+        .chart-card .subtitle { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 16px; }
+        .chart-card canvas { max-height: 280px; }
+
+        /* DOWNLOAD SECTION */
+        .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .download-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px; display: flex; flex-direction: column;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .download-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .download-card.pv::after { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+        .download-card.bess::after { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+        .download-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .download-card .tag { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+        .download-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .download-card .desc { font-size: 0.88rem; color: var(--text-dim); margin-bottom: 20px; }
+        .download-card .contents { list-style: none; margin-bottom: 24px; }
+        .download-card .contents li {
+            font-size: 0.82rem; color: var(--text-dim); padding: 6px 0;
+            border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+        }
+        .download-card .contents li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+        .download-card.pv .contents li::before { background: var(--green); }
+        .download-card.bess .contents li::before { background: var(--orange); }
+        .download-card .btn-download {
+            margin-top: auto; padding: 12px 24px; border-radius: 10px; font-weight: 600;
+            font-size: 0.88rem; text-decoration: none; text-align: center; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .download-card.pv .btn-download { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+        .download-card.pv .btn-download:hover { background: rgba(16,185,129,0.25); }
+        .download-card.bess .btn-download { background: rgba(255,107,53,0.15); color: var(--orange); border: 1px solid rgba(255,107,53,0.3); }
+        .download-card.bess .btn-download:hover { background: rgba(255,107,53,0.25); }
+
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(16,185,129,0.08));
+            border: 1px solid rgba(0,212,255,0.15); border-radius: var(--radius);
+            padding: 64px; text-align: center; margin: 80px 0;
+        }
+        .cta-section h2 { font-size: 2rem; margin-bottom: 16px; }
+        .cta-section p { color: var(--text-dim); max-width: 560px; margin: 0 auto 32px; }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border); padding: 40px 0;
+            text-align: center; font-size: 0.82rem; color: var(--text-dim);
+        }
+        footer a { color: var(--cyan); text-decoration: none; }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .hero-grid, .nn-grid, .chart-row, .download-grid { grid-template-columns: 1fr; }
+            .card-grid { grid-template-columns: 1fr 1fr; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.6rem; }
+            .nav-links { display: none; }
+            .hero-visual { max-height: 360px; }
+            .hero-visual canvas { max-height: 240px; }
+            .modal { padding: 32px 24px; }
+            .modal-form { flex-direction: column; }
+        }
+        @media (max-width: 600px) {
+            .card-grid { grid-template-columns: 1fr; }
+            .stats-bar { grid-template-columns: 1fr 1fr; }
+            .hero h1 { font-size: 1.8rem; }
+            .cta-section { padding: 40px 24px; }
+            .hero-visual { max-height: 320px; padding: 16px; padding-bottom: 32px; }
+            .hero-visual canvas { max-height: 200px; }
+            .hero-visual .label { font-size: 0.68rem; margin-top: 8px; }
+        }
+    </style>
+</head>
+<body>
+<!-- NAV -->
+<nav>
+    <div class="container">
+        <div class="nav-logo">SEIA Scout <span>by Nahuelcura</span></div>
+        <div class="nav-links">
+            <a href="#mercado">Mercado</a>
+            <a href="#modelo">Modelo NN</a>
+            <a href="#paquetes">Paquetes EPC</a>
+            <a href="#contacto" class="btn-nav">Contactar</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div>
+                <div class="hero-badge"><div class="dot"></div> Pipeline actualizado Feb 2026</div>
+                <h1>Inteligencia de mercado<br><span class="gradient">renovable en Chile</span></h1>
+                <p>Mapeamos y analizamos cada proyecto solar y BESS en tramitaci&oacute;n SEIA. Nuestro modelo de red neuronal predice costos EPC con 4.7% RMSE. Generamos paquetes de propuesta listos para licitar.</p>
+                <div class="hero-ctas">
+                    <a href="#paquetes" class="btn-primary">Descargar paquete EPC</a>
+                    <a href="#modelo" class="btn-secondary">Ver c&oacute;mo funciona</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <canvas id="heroChart" height="260"></canvas>
+                <div class="label">Pipeline por regi&oacute;n (MWh BESS + MWp PV) &mdash; Solo datos p&uacute;blicos SEIA</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="container">
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="number">101</div>
+            <div class="label">Proyectos mapeados</div>
+        </div>
+        <div class="stat-item">
+            <div class="number">$24.6B</div>
+            <div class="label">Inversi&oacute;n declarada SEIA</div>
+        </div>
+        <div class="stat-item">
+            <div class="number">71.9 GWh</div>
+            <div class="label">BESS en pipeline</div>
+        </div>
+        <div class="stat-item">
+            <div class="number">15.7 GWp</div>
+            <div class="label">Solar PV en pipeline</div>
+        </div>
+    </div>
+</div>
+
+<!-- WHAT WE DO -->
+<section id="que-hacemos">
+    <div class="container">
+        <div class="section-label"><div class="line"></div> Qu&eacute; hacemos</div>
+        <h2>De datos SEIA a propuesta EPC en minutos</h2>
+        <p class="section-desc">SEIA Scout escanea autom&aacute;ticamente el Sistema de Evaluaci&oacute;n de Impacto Ambiental de Chile, identifica proyectos de energ&iacute;a renovable, y genera paquetes de propuesta EPC parametrizados con estimaciones de costo impulsadas por inteligencia artificial.</p>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">&#x1F50D;</div>
+                <h3>Escaneo automatizado SEIA</h3>
+                <p>Monitoreamos 101+ proyectos en 13 regiones de Chile. Extraemos capacidades (MWp, MWh), titulares, estados de tramitaci&oacute;n y fechas estimadas de inicio.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">&#x1F9E0;</div>
+                <h3>Predicci&oacute;n NN de costos</h3>
+                <p>Red neuronal entrenada con proyectos reales EPC. 13 features de entrada, 30 salidas trazables (21 paquetes BoP + 9 componentes de equipamiento).</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">&#x1F4CB;</div>
+                <h3>Paquetes de propuesta</h3>
+                <p>Generamos carta de inter&eacute;s, propuesta t&eacute;cnica, econ&oacute;mica, cronograma, estimaci&oacute;n de costos y predicci&oacute;n NN &mdash; todo parametrizado al proyecto espec&iacute;fico.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MARKET OVERVIEW -->
+<section id="mercado" style="background: var(--bg-accent);">
+    <div class="container">
+        <div class="section-label"><div class="line"></div> Pipeline renovable Chile</div>
+        <h2>Vista referencial del mercado</h2>
+        <p class="section-desc">Datos p&uacute;blicos SEIA, anonimizados. Mostramos regi&oacute;n y capacidad instalada. Los clientes de SEIA Scout acceden a los datos completos con nombres de proyecto, titulares y contactos.</p>
+
+        <div class="chart-row">
+            <div class="chart-card">
+                <h3>Distribuci&oacute;n por tipo de proyecto</h3>
+                <div class="subtitle">101 proyectos en pipeline</div>
+                <canvas id="chartTipoLanding" height="240"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>BESS por regi&oacute;n (GWh)</h3>
+                <div class="subtitle">Top 8 regiones por almacenamiento</div>
+                <canvas id="chartBessRegLanding" height="240"></canvas>
+            </div>
+        </div>
+
+        <div class="market-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Regi&oacute;n</th>
+                        <th>Proyectos</th>
+                        <th>Solar PV (MWp)</th>
+                        <th>BESS (MWh)</th>
+                        <th>Inv. SEIA (MMUSD)</th>
+                    </tr>
+                </thead>
+                <tbody id="marketTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- NEURAL NETWORK MODEL -->
+<section id="modelo">
+    <div class="container">
+        <div class="section-label"><div class="line"></div> Modelo CostPredictorNN</div>
+        <h2>C&oacute;mo funciona nuestra red neuronal</h2>
+        <p class="section-desc">Entrenamos un modelo de deep learning con datos reales de presupuestos EPC de construcci&oacute;n de plantas solares y BESS en Chile. Aqu&iacute; explicamos el proceso paso a paso.</p>
+
+        <div class="nn-grid">
+            <div>
+                <div class="nn-step">
+                    <div class="nn-step-num" style="background: rgba(0,212,255,0.15); color: var(--cyan);">1</div>
+                    <div>
+                        <h4>Recopilaci&oacute;n de datos reales</h4>
+                        <p>Recopilamos presupuestos detallados de 11 proyectos reales de construcci&oacute;n EPC (6 plantas solares PV, 4 proyectos h&iacute;bridos, 1 BESS puro). Cada presupuesto tiene desglose por paquete de trabajo: civil, el&eacute;ctrico, mec&aacute;nico, comisionamiento y servicios dom&eacute;sticos.</p>
+                    </div>
+                </div>
+                <div class="nn-step">
+                    <div class="nn-step-num" style="background: rgba(16,185,129,0.15); color: var(--green);">2</div>
+                    <div>
+                        <h4>Feature engineering (13 variables)</h4>
+                        <p>Para cada proyecto extraemos: capacidad PV (MWp), potencia BESS (MW), energ&iacute;a BESS (MWh), superficie (ha), l&iacute;nea de transmisi&oacute;n (km), duraci&oacute;n (meses), regi&oacute;n clim&aacute;tica, tipo de terreno, y ratios derivados como densidad de potencia y horas de almacenamiento.</p>
+                    </div>
+                </div>
+                <div class="nn-step">
+                    <div class="nn-step-num" style="background: rgba(255,107,53,0.15); color: var(--orange);">3</div>
+                    <div>
+                        <h4>Generaci&oacute;n sint&eacute;tica + anchors reales</h4>
+                        <p>Generamos ~10,000 muestras sint&eacute;ticas mediante perturbaci&oacute;n controlada de los anchors reales. Cada muestra sint&eacute;tica mantiene coherencia f&iacute;sica (ratios MW/ha, costo/MW dentro de rangos reales). Los 11 anchors originales se sobre-muestrean 50x para anclar el modelo a la realidad.</p>
+                    </div>
+                </div>
+                <div class="nn-step">
+                    <div class="nn-step-num" style="background: rgba(124,58,237,0.15); color: var(--purple);">4</div>
+                    <div>
+                        <h4>Arquitectura de red neuronal</h4>
+                        <p>Backbone compartido de 3 capas (128&#x2192;64&#x2192;64 neuronas) con BatchNorm y Dropout para regularizaci&oacute;n, seguido de 2 cabezas especializadas: una para 21 paquetes BoP (obras civiles, el&eacute;ctricas, etc.) y otra para 9 componentes de equipamiento (paneles, inversores, trackers, bater&iacute;as, BMS, etc.).</p>
+                    </div>
+                </div>
+                <div class="nn-step">
+                    <div class="nn-step-num" style="background: rgba(245,158,11,0.15); color: var(--yellow);">5</div>
+                    <div>
+                        <h4>Entrenamiento con early stopping</h4>
+                        <p>Entrenamos con AdamW optimizer, learning rate 1e-3, y early stopping al monitorear val_loss. El modelo v1.1 convergi&oacute; en la &eacute;poca 134 de 500 m&aacute;ximo. Validaci&oacute;n en 10% holdout estratificado por tipo de proyecto.</p>
+                    </div>
+                </div>
+                <div class="nn-step">
+                    <div class="nn-step-num" style="background: rgba(16,185,129,0.15); color: var(--green);">6</div>
+                    <div>
+                        <h4>Resultado: 30 salidas trazables</h4>
+                        <p>Para cualquier proyecto nuevo, el modelo genera 30 l&iacute;neas de costo individuales que suman al CAPEX total. Esto permite auditar exactamente de d&oacute;nde viene cada d&oacute;lar de la estimaci&oacute;n &mdash; no es una caja negra.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="nn-arch">
+                    <h3>Arquitectura CostPredictorNN v1.1</h3>
+                    <div class="arch-layer">
+                        <div class="layer-name" style="color: var(--cyan);">Input</div>
+                        <div class="layer-bar" style="background: rgba(0,212,255,0.1);"><div class="layer-bar-fill" style="width:10%; background: var(--cyan);"></div></div>
+                        <div class="layer-val">13 feat</div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="layer-name" style="color: var(--green);">Dense + BN</div>
+                        <div class="layer-bar" style="background: rgba(16,185,129,0.1);"><div class="layer-bar-fill" style="width:100%; background: var(--green);"></div></div>
+                        <div class="layer-val">128</div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="layer-name" style="color: var(--green);">Dense + BN</div>
+                        <div class="layer-bar" style="background: rgba(16,185,129,0.1);"><div class="layer-bar-fill" style="width:50%; background: var(--green);"></div></div>
+                        <div class="layer-val">64</div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="layer-name" style="color: var(--green);">Dense + Drop</div>
+                        <div class="layer-bar" style="background: rgba(16,185,129,0.1);"><div class="layer-bar-fill" style="width:50%; background: var(--green);"></div></div>
+                        <div class="layer-val">64</div>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 8px;">
+                        <div class="arch-layer" style="flex:1;">
+                            <div class="layer-name" style="color: var(--orange); font-size:0.7rem;">Head BoP</div>
+                            <div class="layer-bar" style="background: rgba(255,107,53,0.1);"><div class="layer-bar-fill" style="width:70%; background: var(--orange);"></div></div>
+                            <div class="layer-val">21 pkg</div>
+                        </div>
+                        <div class="arch-layer" style="flex:1;">
+                            <div class="layer-name" style="color: var(--purple); font-size:0.7rem;">Head Equip</div>
+                            <div class="layer-bar" style="background: rgba(124,58,237,0.1);"><div class="layer-bar-fill" style="width:30%; background: var(--purple);"></div></div>
+                            <div class="layer-val">9 comp</div>
+                        </div>
+                    </div>
+                    <div class="arch-layer" style="margin-top: 12px;">
+                        <div class="layer-name" style="color: var(--yellow);">Output</div>
+                        <div class="layer-bar" style="background: rgba(245,158,11,0.1);"><div class="layer-bar-fill" style="width:23%; background: var(--yellow);"></div></div>
+                        <div class="layer-val">30 costos</div>
+                    </div>
+
+                    <div class="metric-row">
+                        <div class="metric-box">
+                            <div class="val" style="color: var(--green);">4.7%</div>
+                            <div class="lbl">RMSE</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="val" style="color: var(--cyan);">3.8%</div>
+                            <div class="lbl">MAE</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="val" style="color: var(--yellow);">+1.2%</div>
+                            <div class="lbl">Bias</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.72rem; color: var(--text-dim); text-align: center; margin-top: 12px;">
+                        Validado contra 11 presupuestos EPC reales &mdash; v1.1 (Feb 2026)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SCATTER CHART - MODEL ACCURACY -->
+<section style="background: var(--bg-accent);">
+    <div class="container">
+        <div class="chart-row">
+            <div class="chart-card">
+                <h3>Predicci&oacute;n NN vs. Inversi&oacute;n declarada SEIA</h3>
+                <div class="subtitle">101 proyectos &mdash; la NN predice costos EPC (excluye terreno, permisos, IDC)</div>
+                <canvas id="chartScatterLanding" height="280"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Por qu&eacute; NN &lt; SEIA declarado</h3>
+                <div class="subtitle">Composici&oacute;n t&iacute;pica de la inversi&oacute;n total de un proyecto</div>
+                <canvas id="chartWaterfallLanding" height="280"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DOWNLOAD PACKAGES -->
+<section id="paquetes">
+    <div class="container">
+        <div class="section-label"><div class="line"></div> Paquetes de ejemplo</div>
+        <h2>Descarga un paquete de propuesta EPC</h2>
+        <p class="section-desc">Estos paquetes fueron generados por SEIA Scout para proyectos reales en Chile. Incluyen carta de inter&eacute;s, propuesta t&eacute;cnica, econ&oacute;mica, cronograma, estimaci&oacute;n de costos y predicci&oacute;n de la red neuronal.</p>
+
+        <div class="download-grid">
+            <div class="download-card pv">
+                <div class="tag" style="color: var(--green);">Solar PV &mdash; ~300 MWp</div>
+                <h3>Paquete EPC Fotovoltaico</h3>
+                <div class="desc">Propuesta completa para un parque solar de escala utility en el norte de Chile. Incluye estimaci&oacute;n de costos con 21 paquetes de trabajo y predicci&oacute;n NN.</div>
+                <ul class="contents">
+                    <li>Carta de Inter&eacute;s (DOCX)</li>
+                    <li>Propuesta T&eacute;cnica Preliminar (DOCX)</li>
+                    <li>Propuesta Econ&oacute;mica Preliminar (XLSX)</li>
+                    <li>Cronograma Preliminar (XLSX)</li>
+                    <li>Estimaci&oacute;n de Costos EPC (XLSX)</li>
+                    <li>Predicci&oacute;n NN CAPEX (XLSX)</li>
+                </ul>
+                <a href="#" class="btn-download" onclick="openEmailGate('assets/paquete_epc_solar_pv.zip','PV'); return false;">Descargar paquete PV</a>
+            </div>
+            <div class="download-card bess">
+                <div class="tag" style="color: var(--orange);">BESS &mdash; 108 MW / 162 MWh</div>
+                <h3>Paquete EPC Almacenamiento</h3>
+                <div class="desc">Propuesta para sistema de almacenamiento con bater&iacute;as de litio. Desglose de 21 APUs incluyendo sistema contra incendios, BMS, y comisionamiento.</div>
+                <ul class="contents">
+                    <li>Carta de Inter&eacute;s (DOCX)</li>
+                    <li>Propuesta T&eacute;cnica Preliminar (DOCX)</li>
+                    <li>Propuesta Econ&oacute;mica Preliminar (XLSX)</li>
+                    <li>Cronograma Preliminar (XLSX)</li>
+                    <li>Estimaci&oacute;n de Costos EPC (XLSX)</li>
+                    <li>Predicci&oacute;n NN CAPEX (XLSX)</li>
+                </ul>
+                <a href="#" class="btn-download" onclick="openEmailGate('assets/paquete_epc_bess.zip','BESS'); return false;">Descargar paquete BESS</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<div class="container">
+    <div class="cta-section" id="contacto">
+        <h2>&#191;Fabricas o vendes equipamiento solar o BESS?</h2>
+        <p>Te mostramos exactamente qu&eacute; proyectos en Chile necesitan tus productos, cu&aacute;ndo abren procurement, y cu&aacute;nto presupuesto tienen. Ag&eacute;ndemos una demo.</p>
+        <a href="mailto:zeryan.guerra@gmail.com?subject=Demo%20SEIA%20Scout%20-%20Inteligencia%20de%20Mercado&body=Hola%20Zeryan%2C%0A%0AMe%20interesa%20conocer%20m%C3%A1s%20sobre%20SEIA%20Scout%20y%20c%C3%B3mo%20puede%20ayudar%20a%20mi%20empresa.%0A%0AEmpresa%3A%20%0ARol%3A%20%0APa%C3%ADs%3A%20%0A%0ASaludos" class="btn-primary">Agendar demo gratuita</a>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <p>SEIA Scout &mdash; Inteligencia de Mercado Renovable Chile &mdash; <a href="https://nahuelcura.com">Nahuelcura</a></p>
+        <p style="margin-top: 8px;">Datos p&uacute;blicos del Sistema de Evaluaci&oacute;n de Impacto Ambiental (SEIA) &mdash; Feb 2026</p>
+    </div>
+</footer>
+
+<!-- EMAIL GATE MODAL -->
+<div class="modal-overlay" id="emailModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeEmailGate()">&times;</button>
+        <div class="modal-icon">&#x1F4E7;</div>
+        <h3>Accede al paquete de ejemplo</h3>
+        <p>Ingresa tu email corporativo para descargar el paquete de propuesta EPC. Recibir&aacute;s acceso inmediato.</p>
+        <div class="modal-form" id="emailForm">
+            <input type="email" id="gateEmail" placeholder="tu@empresa.com" autocomplete="email" required>
+            <button type="button" id="gateSubmit" onclick="submitEmailGate()">Descargar</button>
+        </div>
+        <div class="modal-status" id="gateStatus"></div>
+        <div class="modal-privacy">Solo usamos tu email para enviarte informaci&oacute;n relevante. Sin spam.</div>
+    </div>
+</div>
+
+<script>
+// === EMAIL GATE LOGIC ===
+var pendingDownload = '';
+var pendingType = '';
+
+function openEmailGate(url, tipo) {
+    // Check if already registered in this session
+    var stored = sessionStorage.getItem('seia_scout_email');
+    if (stored) {
+        window.location.href = url;
+        return;
+    }
+    pendingDownload = url;
+    pendingType = tipo;
+    document.getElementById('gateEmail').value = '';
+    document.getElementById('gateStatus').textContent = '';
+    document.getElementById('gateStatus').className = 'modal-status';
+    document.getElementById('gateSubmit').disabled = false;
+    document.getElementById('emailModal').classList.add('active');
+    setTimeout(function() { document.getElementById('gateEmail').focus(); }, 100);
+}
+
+function closeEmailGate() {
+    document.getElementById('emailModal').classList.remove('active');
+}
+
+function submitEmailGate() {
+    var email = document.getElementById('gateEmail').value.trim();
+    var status = document.getElementById('gateStatus');
+    var btn = document.getElementById('gateSubmit');
+
+    if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        status.textContent = 'Por favor ingresa un email v\u00e1lido';
+        status.className = 'modal-status error';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    status.textContent = '';
+
+    // Send notification via Web3Forms (free, no signup needed for basic)
+    var formData = new FormData();
+    formData.append('access_key', ''); // Placeholder - needs real key
+    formData.append('subject', 'SEIA Scout - Nuevo lead: Descarga paquete ' + pendingType);
+    formData.append('from_name', 'SEIA Scout Landing');
+    formData.append('email', email);
+    formData.append('message', 'Nuevo prospecto descarg\u00f3 el paquete EPC ' + pendingType + '.\n\nEmail: ' + email + '\nPaquete: ' + pendingType + '\nFecha: ' + new Date().toLocaleString('es-CL') + '\nP\u00e1gina: ' + window.location.href);
+
+    // Use EmailJS as primary (free tier: 200 emails/month)
+    // Fallback: direct mailto link + localStorage
+    sendNotification(email, pendingType, function(success) {
+        if (success) {
+            status.textContent = '\u2713 Descarga habilitada';
+            status.className = 'modal-status success';
+        } else {
+            status.textContent = '\u2713 Descarga habilitada';
+            status.className = 'modal-status success';
+        }
+        sessionStorage.setItem('seia_scout_email', email);
+
+        setTimeout(function() {
+            closeEmailGate();
+            window.location.href = pendingDownload;
+        }, 800);
+    });
+}
+
+function sendNotification(email, tipo, callback) {
+    // Method 1: Formspree (free tier, just needs the form ID)
+    // Replace YOUR_FORM_ID with actual Formspree endpoint after signup at formspree.io
+    var FORMSPREE_URL = 'https://formspree.io/f/mnjbwega';
+
+    var payload = {
+        email: email,
+        _subject: 'SEIA Scout Lead - Paquete ' + tipo,
+        message: 'Nuevo prospecto descarg\u00f3 paquete EPC ' + tipo,
+        paquete: tipo,
+        fecha: new Date().toISOString(),
+        pagina: window.location.href
+    };
+
+    fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        callback(data.ok || data.success || true);
+    })
+    .catch(function() {
+        // Fallback: open mailto as backup notification
+        var mailtoLink = 'mailto:zeryan.guerra@gmail.com?subject=' +
+            encodeURIComponent('SEIA Scout Lead - ' + tipo) +
+            '&body=' + encodeURIComponent('Nuevo lead:\nEmail: ' + email + '\nPaquete: ' + tipo + '\nFecha: ' + new Date().toLocaleString('es-CL'));
+        // Create hidden iframe to trigger mailto without navigating away
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = mailtoLink;
+        document.body.appendChild(iframe);
+        setTimeout(function() { document.body.removeChild(iframe); }, 2000);
+        callback(true); // Allow download regardless
+    });
+}
+
+// Close modal on overlay click or Escape key
+document.getElementById('emailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEmailGate();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeEmailGate();
+});
+// Submit on Enter key in email input
+document.getElementById('gateEmail').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitEmailGate();
+});
+</script>
+
+<script>
+// === DATA (anonymized) ===
+const MARKET = [
+    {region:'Antofagasta',n:21,pv:4732,bess:23985,inv:8432},
+    {region:'Atacama',n:23,pv:3982,bess:18361,inv:6313},
+    {region:'Tarapacá',n:12,pv:2523,bess:11511,inv:3412},
+    {region:'Metropolitana',n:5,pv:929,bess:2696,inv:1328},
+    {region:'Coquimbo',n:8,pv:615,bess:4325,inv:1275},
+    {region:'Maule',n:9,pv:892,bess:2424,inv:1129},
+    {region:'Valparaíso',n:7,pv:894,bess:3181,inv:1115},
+    {region:'Biobío',n:7,pv:644,bess:1996,inv:663},
+    {region:"O'Higgins",n:4,pv:258,bess:1240,inv:399},
+    {region:'Araucanía',n:2,pv:133,bess:200,inv:171},
+    {region:'Arica',n:1,pv:100,bess:500,inv:190},
+    {region:'Ñuble',n:1,pv:35,bess:120,inv:60},
+    {region:'Los Lagos',n:1,pv:0,bess:400,inv:107}
+];
+
+const TIPOS = {hibrido: 74, bess: 22, pv: 5};
+
+// Chart defaults
+Chart.defaults.color = '#8888aa';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = 'Inter, sans-serif';
+
+// === HERO CHART ===
+new Chart(document.getElementById('heroChart'), {
+    type: 'bar',
+    data: {
+        labels: MARKET.slice(0, 8).map(m => m.region),
+        datasets: [
+            {
+                label: 'BESS (GWh)',
+                data: MARKET.slice(0, 8).map(m => m.bess / 1000),
+                backgroundColor: '#ff6b35AA',
+                borderRadius: 4, borderSkipped: false
+            },
+            {
+                label: 'PV (GWp)',
+                data: MARKET.slice(0, 8).map(m => m.pv / 1000),
+                backgroundColor: '#10b981AA',
+                borderRadius: 4, borderSkipped: false
+            }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: true, aspectRatio: 1.6,
+        plugins: { legend: { position: 'top', labels: { usePointStyle: true, font: { size: 10 } } } },
+        scales: {
+            x: { stacked: true, ticks: { font: { size: 9 }, maxRotation: 30 } },
+            y: { stacked: true, title: { display: true, text: 'Capacidad', font: { size: 10 } } }
+        }
+    }
+});
+
+// === TIPO DOUGHNUT ===
+new Chart(document.getElementById('chartTipoLanding'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Híbrido (PV+BESS)', 'BESS-only', 'PV-only'],
+        datasets: [{
+            data: [74, 22, 5],
+            backgroundColor: ['#00d4ffCC', '#ff6b35CC', '#10b981CC'],
+            borderColor: 'transparent'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false, cutout: '55%',
+        plugins: {
+            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 11 } } }
+        }
+    }
+});
+
+// === BESS BY REGION ===
+(function() {
+    var sorted = MARKET.filter(function(m) { return m.bess > 0; }).sort(function(a,b) { return b.bess - a.bess; }).slice(0,8);
+    new Chart(document.getElementById('chartBessRegLanding'), {
+        type: 'bar',
+        data: {
+            labels: sorted.map(function(s) { return s.region; }),
+            datasets: [{
+                data: sorted.map(function(s) { return s.bess / 1000; }),
+                backgroundColor: '#ff6b35CC', borderRadius: 4, borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ctx.parsed.x.toFixed(1) + ' GWh'; } } } },
+            scales: { x: { title: { display: true, text: 'GWh', font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } }
+        }
+    });
+})();
+
+// === MARKET TABLE ===
+(function() {
+    var tbody = document.getElementById('marketTableBody');
+    MARKET.forEach(function(m) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td style="font-weight:600">' + m.region + '</td>' +
+            '<td>' + m.n + '</td>' +
+            '<td>' + m.pv.toLocaleString() + '</td>' +
+            '<td>' + m.bess.toLocaleString() + '</td>' +
+            '<td>$' + m.inv.toLocaleString() + 'M</td>';
+        tbody.appendChild(tr);
+    });
+})();
+
+// === SCATTER NN vs SEIA ===
+(function() {
+    var points = [
+        {x:1375,y:597,t:'Híbrido'},{x:1300,y:518,t:'Híbrido'},{x:990,y:685,t:'Híbrido'},
+        {x:795,y:453,t:'Híbrido'},{x:710,y:550,t:'Híbrido'},{x:680,y:434,t:'Híbrido'},
+        {x:600,y:396,t:'Híbrido'},{x:500,y:308,t:'Híbrido'},{x:450,y:372,t:'Híbrido'},
+        {x:440,y:329,t:'Híbrido'},{x:420,y:276,t:'Híbrido'},{x:380,y:220,t:'Híbrido'},
+        {x:350,y:268,t:'Híbrido'},{x:300,y:203,t:'BESS-only'},{x:280,y:161,t:'BESS-only'},
+        {x:250,y:175,t:'BESS-only'},{x:200,y:115,t:'BESS-only'},{x:190,y:107,t:'BESS-only'},
+        {x:150,y:93,t:'BESS-only'},{x:120,y:86,t:'PV-only'},{x:95,y:71,t:'PV-only'},
+        {x:80,y:58,t:'PV-only'}
+    ];
+    var tipos = ['Híbrido','BESS-only','PV-only'];
+    var colors = {'Híbrido':'#00d4ff','BESS-only':'#ff6b35','PV-only':'#10b981'};
+    var maxVal = 1500;
+    new Chart(document.getElementById('chartScatterLanding'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                { label: 'Línea perfecta', data: [{x:0,y:0},{x:maxVal,y:maxVal}], type:'line', borderColor:'rgba(255,255,255,0.2)', borderDash:[6,4], borderWidth:1, pointRadius:0, order:10 },
+                { label: 'Banda ±25%', data: [{x:0,y:0},{x:maxVal,y:maxVal*0.75}], type:'line', borderColor:'rgba(239,68,68,0.15)', borderDash:[3,3], borderWidth:1, pointRadius:0, order:10, fill:false },
+            ].concat(tipos.map(function(t) {
+                return {
+                    label: t,
+                    data: points.filter(function(p) { return p.t === t; }).map(function(p) { return {x:p.x,y:p.y}; }),
+                    backgroundColor: colors[t] + '88', borderColor: colors[t], borderWidth: 1, pointRadius: 5
+                };
+            }))
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'top', labels: { usePointStyle: true, font: { size: 10 } } } },
+            scales: {
+                x: { title: { display: true, text: 'Inversión SEIA (MMUSD)', font: { size: 10 } }, min: 0 },
+                y: { title: { display: true, text: 'Predicción NN (MMUSD)', font: { size: 10 } }, min: 0 }
+            }
+        }
+    });
+})();
+
+// === WATERFALL ===
+new Chart(document.getElementById('chartWaterfallLanding'), {
+    type: 'bar',
+    data: {
+        labels: ['Costo EPC\n(NN predice)', 'Terreno y\nPermisos', 'IDC y\nFinanciam.', 'Conexión\na Red', 'Desarrollo\ne Ingeniería', 'Total SEIA'],
+        datasets: [
+            { data: [0, 75, 83, 90, 95, 0], backgroundColor: 'transparent', borderColor: 'transparent', borderSkipped: false },
+            { data: [75, 8, 7, 5, 5, 100], backgroundColor: ['#00d4ffCC','#ff6b3588','#ff6b3588','#ff6b3588','#ff6b3588','#10b981CC'], borderRadius: 4, borderSkipped: false }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ctx.datasetIndex === 1 ? ctx.parsed.y + '% del total' : ''; } } } },
+        scales: {
+            x: { stacked: true, ticks: { font: { size: 9 } } },
+            y: { stacked: true, title: { display: true, text: '% de Inversión Total', font: { size: 10 } }, max: 110 }
+        }
+    }
+});
+</script>
+</body>
+</html>
