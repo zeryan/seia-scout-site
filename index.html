@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEIA Scout — Inteligencia de Mercado Renovable Chile | Nahuelcura</title>
     <meta name="description" content="Plataforma de inteligencia de mercado para energías renovables en Chile. 101 proyectos SEIA mapeados. Predicciones de costos EPC con red neuronal. Paquetes de propuesta automatizados.">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SEIA Scout — Inteligencia de Mercado Renovable Chile">
+    <meta property="og:description" content="101 proyectos SEIA mapeados. Predicciones de costos EPC con red neuronal. Paquetes de propuesta automatizados.">
+    <meta property="og:locale" content="es_CL">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SEIA Scout — Inteligencia de Mercado Renovable Chile">
+    <meta name="twitter:description" content="101 proyectos SEIA. Predicciones NN de costos EPC.">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0a14'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='%2300d4ff' font-family='Arial'>S</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -342,6 +353,134 @@
             .hero-visual canvas { max-height: 200px; }
             .hero-visual .label { font-size: 0.68rem; margin-top: 8px; }
         }
+
+        /* HAMBURGER MENU */
+        .hamburger {
+            display: none; background: none; border: none; cursor: pointer;
+            padding: 4px; flex-direction: column; gap: 5px;
+        }
+        .hamburger span {
+            display: block; width: 22px; height: 2px; background: var(--text);
+            transition: all 0.3s; border-radius: 1px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        @media (max-width: 900px) {
+            .hamburger { display: flex; }
+            .nav-links {
+                display: none; position: absolute; top: 100%; left: 0; right: 0;
+                flex-direction: column; background: rgba(10,10,20,0.95);
+                backdrop-filter: blur(20px); padding: 20px 24px; gap: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links.open { display: flex; }
+        }
+
+        /* SCROLL ANIMATIONS */
+        .animate-on-scroll {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+        .animate-on-scroll.delay-1 { transition-delay: 0.1s; }
+        .animate-on-scroll.delay-2 { transition-delay: 0.2s; }
+        .animate-on-scroll.delay-3 { transition-delay: 0.3s; }
+
+        /* === ADMIN DASHBOARD === */
+        #admin-section {
+            display: none; position: fixed; inset: 0; z-index: 2000;
+            background: var(--bg); overflow-y: auto;
+        }
+        #admin-section.active { display: block; }
+        .admin-login {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .admin-login-box {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 48px; max-width: 400px; width: 90%; text-align: center;
+        }
+        .admin-login-box h2 { font-size: 1.4rem; margin-bottom: 8px; }
+        .admin-login-box p { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 24px; }
+        .admin-login-box input {
+            width: 100%; padding: 12px 16px; border-radius: 10px; margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.3);
+            color: var(--text); font-size: 0.9rem; font-family: inherit; outline: none;
+        }
+        .admin-login-box input:focus { border-color: var(--cyan); }
+        .admin-login-box .admin-btn-login {
+            width: 100%; padding: 12px; border-radius: 10px; border: none;
+            background: var(--cyan); color: #000; font-weight: 700; cursor: pointer;
+            font-family: inherit; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .admin-login-box .admin-btn-login:hover { background: #33ddff; }
+        .admin-login-error { color: var(--red); font-size: 0.8rem; margin-top: 8px; min-height: 20px; }
+        .admin-dashboard { display: none; padding: 40px 24px; max-width: 1200px; margin: 0 auto; }
+        .admin-dashboard.active { display: block; }
+        .admin-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+        }
+        .admin-header h1 { font-size: 1.4rem; font-weight: 700; }
+        .admin-header .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .admin-btn {
+            padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-dim); font-size: 0.8rem;
+            cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .admin-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+        .admin-btn.danger:hover { border-color: var(--red); color: var(--red); }
+        .admin-summary {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;
+        }
+        .admin-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 24px;
+        }
+        .admin-card .card-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;
+            letter-spacing: 0.05em; margin-bottom: 8px; }
+        .admin-card .card-value { font-size: 2rem; font-weight: 800; }
+        .admin-card .card-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+        .admin-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .admin-chart-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 24px;
+        }
+        .admin-chart-card h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 16px; }
+        .admin-chart-card canvas { max-height: 280px; }
+        .admin-log {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .admin-log-header {
+            display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .admin-log-header h3 { font-size: 0.92rem; font-weight: 600; }
+        .admin-log-filters select {
+            padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+            background: rgba(0,0,0,0.3); color: var(--text); font-size: 0.78rem; font-family: inherit;
+        }
+        .admin-log table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        .admin-log th {
+            text-align: left; padding: 10px 16px; font-weight: 600; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);
+            background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);
+        }
+        .admin-log td { padding: 8px 16px; border-bottom: 1px solid var(--border); }
+        .admin-log tr:hover td { background: rgba(0,212,255,0.03); }
+        .event-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 10px;
+            font-size: 0.7rem; font-weight: 600;
+        }
+        @media (max-width: 900px) {
+            .admin-summary { grid-template-columns: repeat(2, 1fr); }
+            .admin-charts { grid-template-columns: 1fr; }
+            .admin-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+        }
+        @media (max-width: 600px) {
+            .admin-summary { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -349,7 +488,10 @@
 <nav>
     <div class="container">
         <div class="nav-logo">SEIA Scout <span>by Nahuelcura</span></div>
-        <div class="nav-links">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
             <a href="#mercado">Mercado</a>
             <a href="#modelo">Modelo NN</a>
             <a href="#paquetes">Paquetes EPC</a>
@@ -381,7 +523,7 @@
 
 <!-- STATS BAR -->
 <div class="container">
-    <div class="stats-bar">
+    <div class="stats-bar animate-on-scroll">
         <div class="stat-item">
             <div class="number">101</div>
             <div class="label">Proyectos mapeados</div>
@@ -408,17 +550,17 @@
         <h2>De datos SEIA a propuesta EPC en minutos</h2>
         <p class="section-desc">SEIA Scout escanea autom&aacute;ticamente el Sistema de Evaluaci&oacute;n de Impacto Ambiental de Chile, identifica proyectos de energ&iacute;a renovable, y genera paquetes de propuesta EPC parametrizados con estimaciones de costo impulsadas por inteligencia artificial.</p>
         <div class="card-grid">
-            <div class="card">
+            <div class="card animate-on-scroll delay-1">
                 <div class="card-icon">&#x1F50D;</div>
                 <h3>Escaneo automatizado SEIA</h3>
                 <p>Monitoreamos 101+ proyectos en 13 regiones de Chile. Extraemos capacidades (MWp, MWh), titulares, estados de tramitaci&oacute;n y fechas estimadas de inicio.</p>
             </div>
-            <div class="card">
+            <div class="card animate-on-scroll delay-2">
                 <div class="card-icon">&#x1F9E0;</div>
                 <h3>Predicci&oacute;n NN de costos</h3>
                 <p>Red neuronal entrenada con proyectos reales EPC. 13 features de entrada, 30 salidas trazables (21 paquetes BoP + 9 componentes de equipamiento).</p>
             </div>
-            <div class="card">
+            <div class="card animate-on-scroll delay-3">
                 <div class="card-icon">&#x1F4CB;</div>
                 <h3>Paquetes de propuesta</h3>
                 <p>Generamos carta de inter&eacute;s, propuesta t&eacute;cnica, econ&oacute;mica, cronograma, estimaci&oacute;n de costos y predicci&oacute;n NN &mdash; todo parametrizado al proyecto espec&iacute;fico.</p>
@@ -435,12 +577,12 @@
         <p class="section-desc">Datos p&uacute;blicos SEIA, anonimizados. Mostramos regi&oacute;n y capacidad instalada. Los clientes de SEIA Scout acceden a los datos completos con nombres de proyecto, titulares y contactos.</p>
 
         <div class="chart-row">
-            <div class="chart-card">
+            <div class="chart-card animate-on-scroll delay-1">
                 <h3>Distribuci&oacute;n por tipo de proyecto</h3>
                 <div class="subtitle">101 proyectos en pipeline</div>
                 <canvas id="chartTipoLanding" height="240"></canvas>
             </div>
-            <div class="chart-card">
+            <div class="chart-card animate-on-scroll delay-2">
                 <h3>BESS por regi&oacute;n (GWh)</h3>
                 <div class="subtitle">Top 8 regiones por almacenamiento</div>
                 <canvas id="chartBessRegLanding" height="240"></canvas>
@@ -585,12 +727,12 @@
 <section style="background: var(--bg-accent);">
     <div class="container">
         <div class="chart-row">
-            <div class="chart-card">
+            <div class="chart-card animate-on-scroll delay-1">
                 <h3>Predicci&oacute;n NN vs. Inversi&oacute;n declarada SEIA</h3>
                 <div class="subtitle">101 proyectos &mdash; la NN predice costos EPC (excluye terreno, permisos, IDC)</div>
                 <canvas id="chartScatterLanding" height="280"></canvas>
             </div>
-            <div class="chart-card">
+            <div class="chart-card animate-on-scroll delay-2">
                 <h3>Por qu&eacute; NN &lt; SEIA declarado</h3>
                 <div class="subtitle">Composici&oacute;n t&iacute;pica de la inversi&oacute;n total de un proyecto</div>
                 <canvas id="chartWaterfallLanding" height="280"></canvas>
@@ -607,7 +749,7 @@
         <p class="section-desc">Estos paquetes fueron generados por SEIA Scout para proyectos reales en Chile. Incluyen carta de inter&eacute;s, propuesta t&eacute;cnica, econ&oacute;mica, cronograma, estimaci&oacute;n de costos y predicci&oacute;n de la red neuronal.</p>
 
         <div class="download-grid">
-            <div class="download-card pv">
+            <div class="download-card pv animate-on-scroll delay-1">
                 <div class="tag" style="color: var(--green);">Solar PV &mdash; ~300 MWp</div>
                 <h3>Paquete EPC Fotovoltaico</h3>
                 <div class="desc">Propuesta completa para un parque solar de escala utility en el norte de Chile. Incluye estimaci&oacute;n de costos con 21 paquetes de trabajo y predicci&oacute;n NN.</div>
@@ -621,7 +763,7 @@
                 </ul>
                 <a href="#" class="btn-download" onclick="openEmailGate('assets/paquete_epc_solar_pv.zip','PV'); return false;">Descargar paquete PV</a>
             </div>
-            <div class="download-card bess">
+            <div class="download-card bess animate-on-scroll delay-2">
                 <div class="tag" style="color: var(--orange);">BESS &mdash; 108 MW / 162 MWh</div>
                 <h3>Paquete EPC Almacenamiento</h3>
                 <div class="desc">Propuesta para sistema de almacenamiento con bater&iacute;as de litio. Desglose de 21 APUs incluyendo sistema contra incendios, BMS, y comisionamiento.</div>
@@ -641,7 +783,7 @@
 
 <!-- CTA -->
 <div class="container">
-    <div class="cta-section" id="contacto">
+    <div class="cta-section animate-on-scroll" id="contacto">
         <h2>&#191;Fabricas o vendes equipamiento solar o BESS?</h2>
         <p>Te mostramos exactamente qu&eacute; proyectos en Chile necesitan tus productos, cu&aacute;ndo abren procurement, y cu&aacute;nto presupuesto tienen. Ag&eacute;ndemos una demo.</p>
         <a href="mailto:zeryan.guerra@gmail.com?subject=Demo%20SEIA%20Scout%20-%20Inteligencia%20de%20Mercado&body=Hola%20Zeryan%2C%0A%0AMe%20interesa%20conocer%20m%C3%A1s%20sobre%20SEIA%20Scout%20y%20c%C3%B3mo%20puede%20ayudar%20a%20mi%20empresa.%0A%0AEmpresa%3A%20%0ARol%3A%20%0APa%C3%ADs%3A%20%0A%0ASaludos" class="btn-primary">Agendar demo gratuita</a>
@@ -732,6 +874,9 @@ function submitEmailGate() {
             status.className = 'modal-status success';
         }
         sessionStorage.setItem('seia_scout_email', email);
+        if (typeof SeiaAnalytics !== 'undefined') {
+            SeiaAnalytics.track('email_gate', pendingType + ' | ' + email);
+        }
 
         setTimeout(function() {
             closeEmailGate();
@@ -959,5 +1104,469 @@ new Chart(document.getElementById('chartWaterfallLanding'), {
     }
 });
 </script>
+
+<script>
+// === HAMBURGER MENU ===
+(function() {
+    var btn = document.getElementById('hamburgerBtn');
+    var nav = document.getElementById('navLinks');
+    btn.addEventListener('click', function() {
+        var isOpen = nav.classList.toggle('open');
+        btn.classList.toggle('active');
+        btn.setAttribute('aria-expanded', isOpen);
+    });
+    nav.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            nav.classList.remove('open');
+            btn.classList.remove('active');
+            btn.setAttribute('aria-expanded', 'false');
+        });
+    });
+})();
+
+// === SCROLL ANIMATIONS ===
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.animate-on-scroll').forEach(function(el) {
+        observer.observe(el);
+    });
+})();
+
+// === ANALYTICS TRACKER ===
+var SeiaAnalytics = (function() {
+    var STORAGE_KEY = 'seia_scout_analytics';
+    var SESSION_KEY = 'seia_session_id';
+    var SESSION_START_KEY = 'seia_session_start';
+    var MAX_EVENTS = 5000;
+
+    var sessionId = sessionStorage.getItem(SESSION_KEY);
+    if (!sessionId) {
+        sessionId = 'S' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        sessionStorage.setItem(SESSION_KEY, sessionId);
+        sessionStorage.setItem(SESSION_START_KEY, Date.now().toString());
+    }
+
+    var ua = navigator.userAgent;
+    var deviceType = /Mobi|Android/i.test(ua) ? 'mobile' : (/Tablet|iPad/i.test(ua) ? 'tablet' : 'desktop');
+    var browserName = /Firefox/i.test(ua) ? 'Firefox' : (/Edg/i.test(ua) ? 'Edge' : (/Chrome/i.test(ua) ? 'Chrome' : (/Safari/i.test(ua) ? 'Safari' : 'Other')));
+
+    function getEvents() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveEvents(events) {
+        if (events.length > MAX_EVENTS) events = events.slice(events.length - MAX_EVENTS);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); }
+        catch(e) {
+            events = events.slice(events.length - 1000);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); } catch(e2) {}
+        }
+    }
+
+    function track(type, detail) {
+        var events = getEvents();
+        events.push({
+            type: type,
+            detail: detail || '',
+            timestamp: new Date().toISOString(),
+            session: sessionId,
+            device: deviceType,
+            browser: browserName,
+            referrer: document.referrer || 'direct'
+        });
+        saveEvents(events);
+    }
+
+    // Track page view
+    track('pageview', window.location.pathname + window.location.hash);
+
+    // Track scroll depth
+    var scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
+    var scrollThrottle = null;
+    window.addEventListener('scroll', function() {
+        if (scrollThrottle) return;
+        scrollThrottle = setTimeout(function() {
+            scrollThrottle = null;
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (docHeight <= 0) return;
+            var pct = Math.round((scrollTop / docHeight) * 100);
+            [25, 50, 75, 100].forEach(function(m) {
+                if (pct >= m && !scrollMilestones[m]) {
+                    scrollMilestones[m] = true;
+                    track('scroll', m + '%');
+                }
+            });
+        }, 300);
+    });
+
+    // Track section visibility
+    var sectionObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                var id = entry.target.id || entry.target.className.split(' ')[0];
+                track('section', id);
+                sectionObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('section[id], .cta-section[id], .stats-bar').forEach(function(sec) {
+        sectionObserver.observe(sec);
+    });
+
+    // Track clicks (delegated)
+    document.addEventListener('click', function(e) {
+        var target = e.target.closest('a, button');
+        if (!target) return;
+        var label = '';
+        if (target.classList.contains('btn-primary')) label = 'cta-primary: ' + (target.textContent || '').trim().substring(0, 50);
+        else if (target.classList.contains('btn-secondary')) label = 'cta-secondary: ' + (target.textContent || '').trim().substring(0, 50);
+        else if (target.classList.contains('btn-nav')) label = 'nav-cta: ' + (target.textContent || '').trim().substring(0, 50);
+        else if (target.classList.contains('btn-download')) label = 'download: ' + (target.textContent || '').trim().substring(0, 50);
+        else if (target.closest('.nav-links')) label = 'nav: ' + (target.textContent || '').trim().substring(0, 50);
+        else return;
+        track('click', label);
+    });
+
+    // Track session duration on unload
+    window.addEventListener('beforeunload', function() {
+        var start = parseInt(sessionStorage.getItem(SESSION_START_KEY) || '0');
+        if (start) {
+            var duration = Math.round((Date.now() - start) / 1000);
+            track('session', 'duration_seconds:' + duration);
+        }
+    });
+
+    return {
+        track: track,
+        getEvents: getEvents,
+        clearAll: function() { localStorage.removeItem(STORAGE_KEY); },
+        getSessionId: function() { return sessionId; }
+    };
+})();
+</script>
+
+<script>
+// === ADMIN DASHBOARD ===
+(function() {
+    // Simple hash function (works on file:// and https://)
+    function simpleHash(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var c = str.charCodeAt(i);
+            hash = ((hash << 5) - hash + c) | 0;
+        }
+        return hash.toString(36);
+    }
+    var EXPECTED_USER = 'Zeryan';
+    var EXPECTED_HASH = simpleHash('123momiaes');
+    var adminCharts = {};
+
+    function checkRoute() {
+        if (window.location.hash === '#admin') {
+            document.getElementById('admin-section').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (sessionStorage.getItem('seia_admin_auth') === 'true') {
+                showDashboard();
+            }
+        } else {
+            document.getElementById('admin-section').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+    window.addEventListener('hashchange', checkRoute);
+    checkRoute();
+
+    // Allow Enter key on login fields
+    document.getElementById('adminPass').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') attemptAdminLogin();
+    });
+
+    window.attemptAdminLogin = function() {
+        var user = document.getElementById('adminUser').value.trim();
+        var pass = document.getElementById('adminPass').value;
+        var errorEl = document.getElementById('adminError');
+        if (user === EXPECTED_USER && simpleHash(pass) === EXPECTED_HASH) {
+            sessionStorage.setItem('seia_admin_auth', 'true');
+            errorEl.textContent = '';
+            showDashboard();
+        } else {
+            errorEl.textContent = 'Credenciales incorrectas';
+        }
+    };
+
+    window.closeAdmin = function() {
+        window.location.hash = '';
+    };
+
+    function showDashboard() {
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminDashboard').classList.add('active');
+        renderDashboard();
+    }
+
+    function renderDashboard() {
+        var events = SeiaAnalytics.getEvents();
+
+        // Summary
+        var pageviews = events.filter(function(e) { return e.type === 'pageview'; });
+        var sessions = {};
+        events.forEach(function(e) { sessions[e.session] = true; });
+        var uniqueSessions = Object.keys(sessions).length;
+        var emailGates = events.filter(function(e) { return e.type === 'email_gate'; });
+        var conversionRate = pageviews.length > 0 ? ((emailGates.length / pageviews.length) * 100).toFixed(1) : '0';
+
+        var durations = events.filter(function(e) { return e.type === 'session' && e.detail.indexOf('duration_seconds:') === 0; });
+        var avgDuration = 0;
+        if (durations.length > 0) {
+            var totalDur = durations.reduce(function(sum, e) { return sum + parseInt(e.detail.split(':')[1] || '0'); }, 0);
+            avgDuration = Math.round(totalDur / durations.length);
+        }
+
+        document.getElementById('admTotalVisits').textContent = pageviews.length;
+        document.getElementById('admUniqueSessions').textContent = uniqueSessions;
+        document.getElementById('admAvgTime').textContent = formatDuration(avgDuration);
+        document.getElementById('admConversion').textContent = conversionRate + '%';
+
+        if (events.length > 0) {
+            document.getElementById('admVisitsSub').textContent = 'desde ' + new Date(events[0].timestamp).toLocaleDateString('es-CL');
+            document.getElementById('admSessionsSub').textContent = uniqueSessions + ' sesiones registradas';
+        }
+
+        renderVisitsChart(events);
+        renderDevicesChart(events);
+        renderSectionsChart(events);
+        renderScrollChart(events);
+        renderEventLog();
+    }
+
+    function formatDuration(s) {
+        if (s < 60) return s + 's';
+        if (s < 3600) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+        return Math.floor(s / 3600) + 'h ' + Math.floor((s % 3600) / 60) + 'm';
+    }
+
+    function renderVisitsChart(events) {
+        var byDay = {};
+        events.filter(function(e) { return e.type === 'pageview'; }).forEach(function(e) {
+            var day = e.timestamp.substring(0, 10);
+            byDay[day] = (byDay[day] || 0) + 1;
+        });
+        var days = Object.keys(byDay).sort();
+        var counts = days.map(function(d) { return byDay[d]; });
+        if (adminCharts.visits) adminCharts.visits.destroy();
+        adminCharts.visits = new Chart(document.getElementById('admChartVisits'), {
+            type: 'line',
+            data: {
+                labels: days.map(function(d) { return d.substring(5); }),
+                datasets: [{ label: 'Visitas', data: counts, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.1)', fill: true, tension: 0.3, pointRadius: 3 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+    }
+
+    function renderDevicesChart(events) {
+        var devices = {};
+        var seen = {};
+        events.forEach(function(e) {
+            if (!seen[e.session]) { seen[e.session] = true; devices[e.device] = (devices[e.device] || 0) + 1; }
+        });
+        var labels = Object.keys(devices);
+        var data = labels.map(function(l) { return devices[l]; });
+        var colors = { desktop: '#00d4ff', mobile: '#ff6b35', tablet: '#10b981' };
+        if (adminCharts.devices) adminCharts.devices.destroy();
+        adminCharts.devices = new Chart(document.getElementById('admChartDevices'), {
+            type: 'doughnut',
+            data: { labels: labels, datasets: [{ data: data, backgroundColor: labels.map(function(l) { return colors[l] || '#7c3aed'; }), borderColor: 'transparent' }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } } }
+        });
+    }
+
+    function renderSectionsChart(events) {
+        var sections = {};
+        events.filter(function(e) { return e.type === 'section'; }).forEach(function(e) {
+            sections[e.detail] = (sections[e.detail] || 0) + 1;
+        });
+        var labels = Object.keys(sections);
+        var data = labels.map(function(l) { return sections[l]; });
+        if (adminCharts.sections) adminCharts.sections.destroy();
+        adminCharts.sections = new Chart(document.getElementById('admChartSections'), {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ data: data, backgroundColor: '#00d4ffAA', borderRadius: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+    }
+
+    function renderScrollChart(events) {
+        var milestones = { '25%': 0, '50%': 0, '75%': 0, '100%': 0 };
+        events.filter(function(e) { return e.type === 'scroll'; }).forEach(function(e) {
+            if (milestones.hasOwnProperty(e.detail)) milestones[e.detail]++;
+        });
+        if (adminCharts.scroll) adminCharts.scroll.destroy();
+        adminCharts.scroll = new Chart(document.getElementById('admChartScroll'), {
+            type: 'bar',
+            data: { labels: Object.keys(milestones), datasets: [{ data: Object.values(milestones), backgroundColor: ['#10b981', '#00d4ff', '#f59e0b', '#ff6b35'], borderRadius: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+    }
+
+    window.renderEventLog = function() {
+        var events = SeiaAnalytics.getEvents();
+        var filter = document.getElementById('admFilterType').value;
+        if (filter !== 'all') events = events.filter(function(e) { return e.type === filter; });
+        events = events.slice().reverse().slice(0, 200);
+
+        var tbody = document.getElementById('admEventTableBody');
+        tbody.innerHTML = '';
+        var badgeColors = {
+            pageview: 'background:rgba(0,212,255,0.15);color:#00d4ff',
+            click: 'background:rgba(16,185,129,0.15);color:#10b981',
+            scroll: 'background:rgba(245,158,11,0.15);color:#f59e0b',
+            section: 'background:rgba(124,58,237,0.15);color:#7c3aed',
+            email_gate: 'background:rgba(255,107,53,0.15);color:#ff6b35',
+            session: 'background:rgba(136,136,170,0.15);color:#8888aa'
+        };
+        events.forEach(function(ev) {
+            var tr = document.createElement('tr');
+            var d = new Date(ev.timestamp);
+            tr.innerHTML = '<td>' + d.toLocaleDateString('es-CL') + ' ' + d.toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit'}) + '</td>' +
+                '<td><span class="event-badge" style="' + (badgeColors[ev.type] || '') + '">' + ev.type + '</span></td>' +
+                '<td>' + (ev.detail || '-') + '</td>' +
+                '<td>' + ev.device + ' / ' + ev.browser + '</td>' +
+                '<td style="font-family:JetBrains Mono,monospace;font-size:0.7rem">' + ev.session.substring(0, 8) + '</td>';
+            tbody.appendChild(tr);
+        });
+    };
+
+    window.exportCSV = function() {
+        var events = SeiaAnalytics.getEvents();
+        var csv = 'timestamp,type,detail,session,device,browser,referrer\n';
+        events.forEach(function(e) {
+            csv += '"' + e.timestamp + '","' + e.type + '","' + (e.detail || '').replace(/"/g, '""') + '","' +
+                e.session + '","' + e.device + '","' + e.browser + '","' + (e.referrer || '') + '"\n';
+        });
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'seia_scout_analytics_' + new Date().toISOString().substring(0, 10) + '.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    window.clearAnalyticsData = function() {
+        if (confirm('Esto eliminar\u00e1 todos los datos de analytics. \u00bfContinuar?')) {
+            SeiaAnalytics.clearAll();
+            renderDashboard();
+        }
+    };
+})();
+</script>
+
+<!-- ADMIN DASHBOARD -->
+<div id="admin-section">
+    <div class="admin-login" id="adminLogin">
+        <div class="admin-login-box">
+            <div style="font-size: 2rem; margin-bottom: 16px;">&#x1F512;</div>
+            <h2>SEIA Scout Admin</h2>
+            <p>Panel de analytics interno</p>
+            <input type="text" id="adminUser" placeholder="Usuario" autocomplete="username">
+            <input type="password" id="adminPass" placeholder="Contrase&ntilde;a" autocomplete="current-password">
+            <button class="admin-btn-login" onclick="attemptAdminLogin()">Ingresar</button>
+            <div class="admin-login-error" id="adminError"></div>
+        </div>
+    </div>
+    <div class="admin-dashboard" id="adminDashboard">
+        <div class="admin-header">
+            <h1>&#x1F4CA; Analytics Dashboard</h1>
+            <div class="admin-actions">
+                <button class="admin-btn" onclick="exportCSV()">Exportar CSV</button>
+                <button class="admin-btn danger" onclick="clearAnalyticsData()">Limpiar datos</button>
+                <button class="admin-btn" onclick="closeAdmin()">Volver al sitio</button>
+            </div>
+        </div>
+        <div class="admin-summary">
+            <div class="admin-card">
+                <div class="card-label">Total visitas</div>
+                <div class="card-value" id="admTotalVisits" style="color: var(--cyan);">0</div>
+                <div class="card-sub" id="admVisitsSub">--</div>
+            </div>
+            <div class="admin-card">
+                <div class="card-label">Sesiones &uacute;nicas</div>
+                <div class="card-value" id="admUniqueSessions" style="color: var(--green);">0</div>
+                <div class="card-sub" id="admSessionsSub">--</div>
+            </div>
+            <div class="admin-card">
+                <div class="card-label">Tiempo promedio</div>
+                <div class="card-value" id="admAvgTime" style="color: var(--orange);">0s</div>
+                <div class="card-sub">por sesi&oacute;n</div>
+            </div>
+            <div class="admin-card">
+                <div class="card-label">Tasa de conversi&oacute;n</div>
+                <div class="card-value" id="admConversion" style="color: var(--purple);">0%</div>
+                <div class="card-sub">email gate completado</div>
+            </div>
+        </div>
+        <div class="admin-charts">
+            <div class="admin-chart-card">
+                <h3>Visitas por d&iacute;a</h3>
+                <canvas id="admChartVisits" height="250"></canvas>
+            </div>
+            <div class="admin-chart-card">
+                <h3>Dispositivos</h3>
+                <canvas id="admChartDevices" height="250"></canvas>
+            </div>
+        </div>
+        <div class="admin-charts" style="grid-template-columns: 1fr 1fr;">
+            <div class="admin-chart-card">
+                <h3>Secciones vistas</h3>
+                <canvas id="admChartSections" height="250"></canvas>
+            </div>
+            <div class="admin-chart-card">
+                <h3>Profundidad de scroll</h3>
+                <canvas id="admChartScroll" height="250"></canvas>
+            </div>
+        </div>
+        <div class="admin-log">
+            <div class="admin-log-header">
+                <h3>Registro de eventos</h3>
+                <div class="admin-log-filters">
+                    <select id="admFilterType" onchange="renderEventLog()">
+                        <option value="all">Todos</option>
+                        <option value="pageview">Pageviews</option>
+                        <option value="click">Clicks</option>
+                        <option value="scroll">Scroll</option>
+                        <option value="section">Secciones</option>
+                        <option value="email_gate">Email gate</option>
+                        <option value="session">Sesi&oacute;n</option>
+                    </select>
+                </div>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Tipo</th>
+                            <th>Detalle</th>
+                            <th>Dispositivo</th>
+                            <th>Sesi&oacute;n</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admEventTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
